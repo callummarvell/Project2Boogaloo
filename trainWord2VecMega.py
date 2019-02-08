@@ -61,9 +61,12 @@ print(spaces)
 l = 0
 total = nltk.tokenize.sent_tokenize(total)
 total_sents = []
-stop = stopwords.words('english') + list(string.punctuation)
+addstop = ["¬","£"]
+nonstop = ['being', 'doing', 'against', 'between', 'during', 'before', 'after', 'above', 'below', 'up', 'down', 'on', 'off', 'over', 'under', 'ma']
+stop = stopwords.words('english') + list(string.punctuation) + addstop
+stop = list(set([item for item in stop if item not in nonstop]))
 first = True
-for loop in range(5):
+for loop in range(2):
     random.seed(loop)
     random.shuffle(wordlist)
     random.shuffle(total)
@@ -91,9 +94,14 @@ for loop in range(5):
             try:
                 print("\n\ntrying to train\n\n")
                 token_count = sum([len(sent) for sent in total_sents])
-                model.train(total_sents, total_examples = token_count, epochs=self.iter-(loop*3))
-            except NameError:
-                model = Word2Vec(sentences=total_sents, sg=1, size=300, min_count=1, max_vocab_size=None, max_final_vocab=None, workers=12, iter=15)
+                model.build_vocab(sentences=total_sents, update=True)
+                print("Vocab updated")
+                model.train(total_sents, total_examples = token_count, epochs=10-(loop*3))
+            except (NameError, AttributeError):
+                print("NAMEATTERROR")
+                model = Word2Vec(sentences=total_sents, sg=1, window=10, size=300, min_count=100, max_vocab_size=None, max_final_vocab=800000, workers=12, iter=10)
+                model.save("w2vtemp.model")
+                model = Word2Vec.load("w2vtemp.model")
             finally:
                 total_sents = []
         if (l>50):
@@ -110,9 +118,16 @@ for loop in range(5):
             try:
                 print("\n\ntrying to train\n\n")
                 token_count = sum([len(sent) for sent in total_sents])
-                model.train(total_sents, total_examples = token_count, epochs=self.iter-(loop*3))
-            except NameError:
-                model = Word2Vec(sentences=total_sents, sg=1, size=300, min_count=1, max_vocab_size=None, max_final_vocab=None, workers=12, iter=15)
+                model.build_vocab(sentences=total_sents, update=True)
+                print("Vocab updated")
+                model.train(total_sents, total_examples = token_count, epochs=10-(loop*3))
+            except (NameError, AttributeError):
+                print("NAMEATTERROR")
+                model = Word2Vec(sentences=total_sents, sg=1, window=10, size=300, min_count=100, max_vocab_size=None, max_final_vocab=800000, workers=12, iter=10)
+                print(type(model))
+                model.save("w2vtemp.model")
+                model = Word2Vec.load("w2vtemp.model")
+                print(type(model))
             finally:
                 total_sents = []     
     
@@ -130,8 +145,8 @@ for loop in range(5):
     
         print("\n\ntrying to train\n\n")
         token_count = sum([len(sent) for sent in total])
-        
-    model.train(total, total_examples = token_count, epochs=15-(loop*3))
+    model.build_vocab(sentences=total, update=True)    
+    model.train(total, total_examples = token_count, epochs=10-(loop*3))
     
-model.save("w2vMega2.model")
-model.wv.save_word2vec_format('modelMega2.bin', binary=True)
+model.save("w2vMega5.model")
+model.wv.save_word2vec_format('modelMega5.bin', binary=True)

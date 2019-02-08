@@ -69,7 +69,7 @@ for i in range(0,7):
 
 assassin=wordset_copy[0]
 
-model = KeyedVectors.load_word2vec_format("modelMega.bin", binary=True)
+model = KeyedVectors.load_word2vec_format("modelMega5.bin", binary=True)
 model.init_sims(replace=True)
 
 def stem(word):
@@ -94,7 +94,7 @@ def findWords(targetset,wholeset,clue,size):
     best = None
     combinations = list(itertools.combinations(wholeset,size))
     #print(combinations)
-    clue_vec = model.vectors_norm[model.vocab[stem(fixWord(clue))].index]
+    clue_vec = model.vectors_norm[model.vocab[fixWord(clue)].index]
     #print(stem(fixWord(clue)))
     def inner(elem):
         test_vec = model.vectors_norm[model.vocab[stem(fixWord(elem))].index]
@@ -116,8 +116,8 @@ def findWords(targetset,wholeset,clue,size):
     print(best)
     return best,best_dist
 
-#print(findWords(["cat","dog","cow","moose","pan","oven","paint"], "pet", 2))
-print(findWords([],["capital","lead","van", "church","rome"], "car", 2))
+#print(findWords([],["cat","dog","cow","moose","pan","oven","paint"], "pet", 2))
+#print(findWords([],["capital","lead","van", "church","rome"], "car", 2))
 dead=False
 current = 1 - redfirst
 while (len(redwords)>0 and len(bluewords)>0 and dead!=True):
